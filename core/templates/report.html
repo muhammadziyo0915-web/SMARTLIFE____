@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}
+    SmartLife - Hisobot
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .report-title {
+        margin-bottom: 25px;
+    }
+
+    .report-box {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.06);
+    }
+
+    .date-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    input,
+    button {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    button {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.06);
+    }
+
+    .number {
+        font-size: 25px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    canvas {
+        max-height: 350px;
+    }
+
+    @media(max-width:700px) {
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+
+<h1 class="report-title">
+    📊 Moliyaviy hisobot
+</h1>
+
+
+<div class="report-box">
+
+    <h2>
+        📅 Sana oralig‘i
+    </h2>
+
+    <br>
+
+    <form method="GET" class="date-form">
+
+        <input
+            type="date"
+            name="start_date"
+            value="{{ start_date }}"
+        >
+
+        <input
+            type="date"
+            name="end_date"
+            value="{{ end_date }}"
+        >
+
+        <button type="submit">
+            📊 Hisobotni ko‘rish
+        </button>
+
+    </form>
+
+</div>
+
+
+<div class="cards">
+
+    <div class="card">
+
+        <h3>
+            📈 Daromad
+        </h3>
+
+        <div class="number">
+            {{ income }} so'm
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            📉 Xarajat
+        </h3>
+
+        <div class="number">
+            {{ expense }} so'm
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>
+            💰 Balans
+        </h3>
+
+        <div class="number">
+            {{ balance }} so'm
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="report-box">
+
+    <h2>
+        📊 Daromad va xarajat
+    </h2>
+
+    <br>
+
+    <canvas id="reportChart"></canvas>
+
+</div>
+
+
+<div class="report-box">
+
+    {% if start_date or end_date %}
+
+        <p>
+            Tanlangan davr:
+            <strong>{{ start_date }}</strong>
+            →
+            <strong>{{ end_date }}</strong>
+        </p>
+
+    {% else %}
+
+        <p>
+            Barcha operatsiyalar bo‘yicha hisobot.
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const income = Number("{{ income }}");
+    const expense = Number("{{ expense }}");
+
+    new Chart(
+        document.getElementById('reportChart'),
+        {
+            type: 'bar',
+
+            data: {
+
+                labels: [
+                    'Daromad',
+                    'Xarajat'
+                ],
+
+                datasets: [{
+
+                    label: "So'm",
+
+                    data: [
+                        income,
+                        expense
+                    ]
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+                        beginAtZero: true
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+{% endblock %}

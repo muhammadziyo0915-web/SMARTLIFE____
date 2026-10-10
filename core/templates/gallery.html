@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}SmartLife — Galereya{% endblock %}
+{% block extra_head %}
+<style>
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.gallery-item{overflow:hidden;position:relative}
+.gallery-img{width:100%;height:240px;object-fit:cover;display:block;transition:transform .35s}
+.gallery-item:hover .gallery-img{transform:scale(1.04)}
+.gallery-overlay{position:absolute;left:0;right:0;bottom:0;padding:35px 14px 14px;background:linear-gradient(transparent,rgba(15,23,42,.85));color:#fff}
+.gallery-delete{position:absolute;right:10px;top:10px}
+@media(max-width:1000px){.gallery-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.gallery-grid{grid-template-columns:repeat(2,1fr)}.gallery-img{height:190px}}
+@media(max-width:450px){.gallery-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>🖼️ Mening galereyam</h1><p>O‘zingizga tegishli rasmlarni saqlang va istalgan payt ko‘ring.</p></div>
+</div>
+<div class="card" style="padding:22px;margin-bottom:22px">
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+  <form method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1.5fr auto;gap:12px;align-items:end">
+    {% csrf_token %}
+    <div class="form-group" style="margin:0"><label>Rasm nomi</label><input class="input" name="title" maxlength="200" placeholder="Masalan: Yozgi sayohat"></div>
+    <div class="form-group" style="margin:0"><label>Rasm tanlang</label><input class="input" type="file" name="image" accept=".jpg,.jpeg,.png,.webp,image/*" required></div>
+    <button class="btn btn-primary" type="submit">⬆️ Yuklash</button>
+  </form>
+  <div class="muted" style="font-size:12px;margin-top:10px">JPG, PNG yoki WEBP • maksimal 10 MB</div>
+</div>
+{% if images %}
+<div class="gallery-grid">
+{% for item in images %}
+<article class="card gallery-item">
+  <img class="gallery-img" src="{{ item.image.url }}" alt="{{ item.title|default:'Galereya rasmi' }}" loading="lazy">
+  <div class="gallery-overlay"><b>{{ item.title|default:"Nomsiz rasm" }}</b><div style="font-size:11px;opacity:.8">{{ item.created_at|date:"d.m.Y H:i" }}</div></div>
+  <form class="gallery-delete" method="post" action="{% url 'delete_gallery_image' item.id %}" onsubmit="return confirm('Bu rasmni o‘chirasizmi?');">
+    {% csrf_token %}<button class="btn btn-danger" style="padding:8px 10px" type="submit" title="O‘chirish">🗑️</button>
+  </form>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="card empty">🖼️ <b>Galereya hozircha bo‘sh.</b><br>Yuqoridagi forma orqali birinchi rasmingizni yuklang.</div>
+{% endif %}
+{% endblock %}

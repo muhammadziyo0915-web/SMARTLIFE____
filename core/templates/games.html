@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}O‘yinlar • SmartLife{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🎮 SmartLife O‘yinlar</h1><p>Dam ol, mashq qil, bilim va tezligingni sinab ko‘r.</p></div></div>
+<div class="grid-3">
+<a class="card" href="{% url 'typing_game' %}" style="padding:28px;display:block"><div style="font-size:45px">⌨️</div><h2>Smart Type</h2><p class="muted">Monkeytype uslubida tez yozish. WPM va aniqlik bilan umumiy reytingga kir.</p><div class="btn btn-primary" style="margin-top:18px">Boshlash →</div></a>
+<a class="card" href="{% url 'math_game' %}" style="padding:28px;display:block"><div style="font-size:45px">🧮</div><h2>Smart Math</h2><p class="muted">Qo‘shish, ayirish, ko‘paytirish va bo‘lish. Qiyinlikni o‘zing tanla.</p><div class="btn btn-primary" style="margin-top:18px">Boshlash →</div></a>
+<a class="card" href="{% url 'vocabulary_game' %}" style="padding:28px;display:block"><div style="font-size:45px">🇬🇧</div><h2>Smart English</h2><p class="muted">300 ta eng kerakli so‘zdan random test. Har savolda 3 ta variant.</p><div class="btn btn-primary" style="margin-top:18px">Testni boshlash →</div></a>
+<a class="card" href="{% url 'calculator' %}" style="padding:28px;display:block"><div style="font-size:45px">🔢</div><h2>Smart Calculator</h2><p class="muted">Tez va chiroyli kalkulator: +, −, ×, ÷, %.</p><div class="btn btn-primary" style="margin-top:18px">Ochish →</div></a>
+</div>
+<div class="card" style="padding:24px;margin-top:20px"><h2>🏆 Umumiy reyting</h2><p class="muted">Barcha foydalanuvchilarning eng yaxshi natijalari.</p><div class="grid-3" style="margin-top:18px">
+<div><h3>⌨️ Smart Type</h3>{% for x in typing_leaders %}<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>{{ forloop.counter }}. {{ x.user.username }}</b><span>{{ x.wpm }} WPM · {{ x.accuracy }}%</span></div>{% empty %}<p class="muted">Hali natija yo‘q.</p>{% endfor %}</div>
+<div><h3>🧮 Smart Math</h3>{% for x in math_leaders %}<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>{{ forloop.counter }}. {{ x.user.username }}</b><span>{{ x.score }}/{{ x.total }}</span></div>{% empty %}<p class="muted">Hali natija yo‘q.</p>{% endfor %}</div>
+<div><h3>🇬🇧 Smart English</h3>{% for x in vocab_leaders %}<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>{{ forloop.counter }}. {{ x.user.username }}</b><span>{{ x.correct }}/{{ x.total }} · {{ x.percentage }}%</span></div>{% empty %}<p class="muted">Hali natija yo‘q.</p>{% endfor %}</div>
+</div></div>
+{% endblock %}

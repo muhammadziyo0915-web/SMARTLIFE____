@@ -1,0 +1,351 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    SmartLife - Yangi vazifa
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .form-wrapper {
+        max-width: 700px;
+        margin: 20px auto;
+    }
+
+    .form-card {
+        background: rgba(255,255,255,.94);
+        padding: 35px;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,.08);
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .form-header .icon {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    .form-header h1 {
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: #6b7280;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 13px 15px;
+        border: 1px solid #dfe3eb;
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        transition: .2s;
+        background: white;
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+    }
+
+    .priority-title {
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .priority-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .priority-option input {
+        display: none;
+    }
+
+    .priority-option label {
+        display: block;
+        padding: 14px 10px;
+        text-align: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: .2s;
+        font-weight: 600;
+    }
+
+    .priority-option label:hover {
+        transform: translateY(-2px);
+    }
+
+    .priority-option input:checked + label {
+        border-color: #4f46e5;
+        background: #eef2ff;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        font-size: 15px;
+    }
+
+    .save-btn {
+        color: white;
+        background: linear-gradient(
+            90deg,
+            #4f46e5,
+            #06b6d4
+        );
+    }
+
+    .back-btn {
+        color: #374151;
+        background: #f3f4f6;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    @media(max-width:600px) {
+
+        .form-card {
+            padding: 25px 18px;
+        }
+
+        .priority-options {
+            grid-template-columns: 1fr;
+        }
+
+        .form-buttons {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<div class="form-wrapper">
+
+    <div class="form-card">
+
+        <!-- HEADER -->
+
+        <div class="form-header">
+
+            <div class="icon">
+                📝
+            </div>
+
+            <h1>
+                Yangi vazifa
+            </h1>
+
+            <p>
+                Bugungi rejangizga yangi vazifa qoshing.
+            </p>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- TITLE -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    📝 Vazifa nomi
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Masalan: Dars qilish"
+                    maxlength="200"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    📄 Tavsif
+                </label>
+
+
+
+
+<textarea
+                    id="description"
+                    name="description"
+                    placeholder="Vazifa haqida qisqacha ma'lumot..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- DEADLINE -->
+
+            <div class="form-group">
+
+                <label for="deadline">
+                    📅 Muddat
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="deadline"
+                    name="deadline"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PRIORITY -->
+
+            <div class="form-group">
+
+                <div class="priority-title">
+                    🎯 Muhimlik darajasi
+                </div>
+
+
+                <div class="priority-options">
+
+
+                    <div class="priority-option">
+
+                        <input
+                            type="radio"
+                            id="high"
+                            name="priority"
+                            value="high"
+                        >
+
+                        <label for="high">
+                            🔴 Muhim
+                        </label>
+
+                    </div>
+
+
+                    <div class="priority-option">
+
+                        <input
+                            type="radio"
+                            id="medium"
+                            name="priority"
+                            value="medium"
+                            checked
+                        >
+
+                        <label for="medium">
+                            🟡 Ortacha
+                        </label>
+
+                    </div>
+
+
+                    <div class="priority-option">
+
+                        <input
+                            type="radio"
+                            id="low"
+                            name="priority"
+                            value="low"
+                        >
+
+                        <label for="low">
+                            🟢 Oddiy
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="form-buttons">
+
+                <a
+                    href="{% url 'tasks' %}"
+                    class="btn back-btn"
+                >
+                    ↩️ Orqaga
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn save-btn"
+                >
+                    💾 Vazifani saqlash
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

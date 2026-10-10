@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}SmartLife — Qo‘shiqlar{% endblock %}
+{% block extra_head %}
+<style>
+.song-list{display:grid;gap:13px}
+.song-row{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:14px;padding:15px 18px}
+.song-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#6366f1,#06b6d4);color:#fff;font-size:22px}
+.song-title{font-weight:900}.song-date{font-size:12px;color:var(--muted);margin-top:2px}
+.song-row audio{width:min(380px,35vw);height:38px}
+@media(max-width:800px){.song-row{grid-template-columns:48px 1fr}.song-row audio{grid-column:1/-1;width:100%}.song-row .song-delete{grid-column:2;grid-row:1}}
+@media(max-width:600px){.song-form{grid-template-columns:1fr!important}.song-row{grid-template-columns:44px 1fr}.song-icon{width:44px;height:44px}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>🎵 Mening qo‘shiqlarim</h1><p>Sevimli audio fayllaringizni shu yerga yuklab, brauzerda tinglang.</p></div>
+</div>
+<div class="card" style="padding:22px;margin-bottom:22px">
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+  <form class="song-form" method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1.5fr auto;gap:12px;align-items:end">
+    {% csrf_token %}
+    <div class="form-group" style="margin:0"><label>Qo‘shiq nomi</label><input class="input" name="title" maxlength="200" placeholder="Masalan: Sevimli qo‘shig‘im"></div>
+    <div class="form-group" style="margin:0"><label>Audio fayl</label><input class="input" type="file" name="audio" accept=".mp3,.wav,.ogg,.m4a,.aac,audio/*" required></div>
+    <button class="btn btn-primary" type="submit">⬆️ Yuklash</button>
+  </form>
+  <div class="muted" style="font-size:12px;margin-top:10px">MP3, WAV, OGG, M4A yoki AAC • maksimal 50 MB</div>
+</div>
+{% if songs %}
+<div class="song-list">
+{% for song in songs %}
+<article class="card song-row">
+  <div class="song-icon">🎵</div>
+  <div><div class="song-title">{{ song.title }}</div><div class="song-date">Qo‘shilgan: {{ song.created_at|date:"d.m.Y H:i" }}</div></div>
+  <form class="song-delete" method="post" action="{% url 'delete_song' song.id %}" onsubmit="return confirm('Bu qo‘shiqni o‘chirasizmi?');">
+    {% csrf_token %}<button class="btn btn-danger" style="padding:8px 10px" type="submit">🗑️</button>
+  </form>
+  <audio controls preload="metadata" src="{{ song.audio.url }}">Brauzeringiz audio pleerni qo‘llab-quvvatlamaydi.</audio>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="card empty">🎵 <b>Qo‘shiqlar bo‘limi hozircha bo‘sh.</b><br>Yuqoridan audio fayl yuklab ko‘ring.</div>
+{% endif %}
+{% endblock %}

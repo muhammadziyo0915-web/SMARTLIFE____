@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}SmartLife — AI yordamchi{% endblock %}
+
+{% block extra_head %}
+<style>
+.ai-page{max-width:1050px;margin:auto}
+.ai-hero{position:relative;overflow:hidden;padding:28px;border-radius:28px;color:#fff;background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 48%,#0891b2 100%);box-shadow:0 25px 70px rgba(37,99,235,.24);margin-bottom:18px}
+.ai-hero:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-70px;top:-90px;background:rgba(255,255,255,.12)}
+.ai-hero h1{font-size:32px;letter-spacing:-.8px}.ai-hero p{opacity:.88;margin-top:5px;max-width:700px}
+.ai-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.ai-badge{padding:7px 10px;border-radius:99px;background:rgba(255,255,255,.13);font-size:12px;font-weight:800}
+.ai-layout{display:grid;grid-template-columns:1fr 250px;gap:18px}
+.ai-card{background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.95);border-radius:25px;box-shadow:0 18px 55px rgba(15,23,42,.09);overflow:hidden}
+.ai-chat-head{padding:15px 18px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ai-online{font-size:12px;font-weight:800;color:#059669}.ai-online:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:6px}
+.ai-history{height:510px;overflow:auto;padding:18px;background:linear-gradient(160deg,#eff6ff,#f8fafc 60%,#ecfeff)}
+.ai-bubble{max-width:78%;padding:12px 14px;border-radius:18px;margin:9px 0;box-shadow:0 6px 20px rgba(15,23,42,.05);white-space:pre-wrap;word-break:break-word}
+.ai-bubble.user{margin-left:auto;background:#2563eb;color:#fff;border-top-right-radius:5px}
+.ai-bubble.assistant{background:#fff;color:#1e293b;border-top-left-radius:5px}
+.ai-role{font-size:11px;font-weight:900;opacity:.72;margin-bottom:4px}
+.ai-compose{padding:13px;border-top:1px solid #e2e8f0;background:#fff}.ai-compose form{display:flex;gap:8px}
+.ai-compose textarea{resize:none;min-height:48px;max-height:130px;padding:13px;border:1px solid #dbeafe;border-radius:15px;background:#f8fafc;outline:none;flex:1}
+.ai-compose textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 4px rgba(96,165,250,.13);background:#fff}
+.ai-sidebar{padding:17px}.ai-sidebar h3{font-size:15px;margin-bottom:10px}.ai-side-btn{width:100%;text-align:left;border:1px solid #dbeafe;background:#eff6ff;color:#1d4ed8;border-radius:14px;padding:11px 12px;margin:5px 0;font-weight:800;font-size:12px;cursor:pointer}
+.ai-side-btn:hover{background:#dbeafe;transform:translateY(-1px)}.ai-tip{margin-top:14px;padding:12px;border-radius:15px;background:#f0fdf4;color:#166534;font-size:12px;line-height:1.5}
+@media(max-width:850px){.ai-layout{grid-template-columns:1fr}.ai-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ai-sidebar h3,.ai-tip{grid-column:1/-1}.ai-side-btn{margin:0}}
+@media(max-width:600px){.ai-hero{padding:22px}.ai-hero h1{font-size:27px}.ai-history{height:55vh}.ai-bubble{max-width:90%}.ai-compose form{flex-direction:column}.ai-compose .btn{width:100%}.ai-sidebar{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ai-page">
+    <section class="ai-hero">
+        <h1>🤖 SmartLife AI</h1>
+        <p>Vazifalaringiz, moliyangiz va kunlik rejalaringizni tushunadigan shaxsiy yordamchi.</p>
+        <div class="ai-badges">
+            <span class="ai-badge">⚡ Tezkor yordam</span>
+            <span class="ai-badge">📋 Vazifalar</span>
+            <span class="ai-badge">💰 Moliya</span>
+            <span class="ai-badge">🗓️ Rejalashtirish</span>
+        </div>
+    </section>
+
+    {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+    <div class="ai-layout">
+        <section class="ai-card">
+            <div class="ai-chat-head">
+                <div><strong>SmartLife yordamchi</strong><div class="muted" style="font-size:12px">Sizning SmartLife ma'lumotlaringiz asosida</div></div>
+                <div class="ai-online">AI faol</div>
+            </div>
+
+            <div class="ai-history" id="fullAiHistory">
+                <div class="ai-bubble assistant">
+                    <div class="ai-role">🤖 SmartLife AI</div>
+                    Salom! 👋 Qanday yordam beray? Masalan, bugungi vazifalaringizni tartiblayman yoki xarajatlaringizni tahlil qilaman.
+                </div>
+
+                {% for message in messages %}
+                <div class="ai-bubble {% if message.role == 'user' %}user{% else %}assistant{% endif %}">
+                    <div class="ai-role">{% if message.role == 'user' %}👤 Siz{% else %}🤖 AI{% endif %}</div>
+                    {{ message.content }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="ai-compose">
+                <form method="post" id="fullAiForm">
+                    {% csrf_token %}
+                    <textarea id="fullAiInput" name="message" maxlength="2000" placeholder="Savolingizni yozing..." required></textarea>
+                    <button class="btn btn-primary" type="submit" style="min-width:120px">➤ Yuborish</button>
+                </form>
+                <div class="muted" style="font-size:11px;margin-top:7px">Enter — yangi qatorda yozish mumkin. Maksimal 2000 belgi.</div>
+            </div>
+        </section>
+
+        <aside class="ai-card ai-sidebar">
+            <h3>✨ Tezkor yordam</h3>
+            <button class="ai-side-btn" type="button" data-q="Bugungi vazifalarimni ustuvorlik bo‘yicha rejalashtir">📋 Vazifalarimni tartibla</button>
+            <button class="ai-side-btn" type="button" data-q="Mening xarajatlarimni tahlil qilib, tejash uchun 3 ta maslahat ber">💰 Xarajatlarni tahlil qil</button>
+            <button class="ai-side-btn" type="button" data-q="Bugun uchun samarali kunlik reja tuzib ber">🗓️ Kunlik reja tuz</button>
+            <button class="ai-side-btn" type="button" data-q="SmartLife'dagi moliyaviy holatimni qisqacha tushuntirib ber">📊 Holatimni tushuntir</button>
+            <div class="ai-tip">💡 <b>Maslahat:</b> AI sizning SmartLife'dagi vazifalar va moliyaviy ma'lumotlaringizdan foydalanib, aniqroq tavsiya bera oladi.</div>
+
+            <form method="post" action="{% url 'clear_ai_chat' %}" style="margin-top:8px">
+                {% csrf_token %}
+                <button class="btn btn-soft" type="submit" style="width:100%">🧹 Suhbatni tozalash</button>
+            </form>
+        </aside>
+    </div>
+</div>
+
+<script>
+(function(){
+    const input = document.getElementById("fullAiInput");
+    const history = document.getElementById("fullAiHistory");
+    document.querySelectorAll(".ai-side-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+            input.value = btn.dataset.q;
+            input.focus();
+            input.scrollIntoView({behavior:"smooth",block:"center"});
+        });
+    });
+    history.scrollTop = history.scrollHeight;
+})();
+</script>
+{% endblock %}
